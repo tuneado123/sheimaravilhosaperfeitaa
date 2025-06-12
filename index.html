@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa História de Amor</title>
+    <!-- ÍCONE DE CORAÇÃO NA ABA DO NAVEGADOR -->
+    <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23d18a8a"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'>
+    <style>
+        /* Importação de Fontes do Google */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap');
+
+        /* Variáveis de Cor (Tema "Rose Gold") */
+        :root {
+            --cor-fundo: #fdf6f6;
+            --cor-container: #ffffff;
+            --cor-principal: #d18a8a;
+            --cor-acento: #e1b3b3;
+            --cor-texto: #5c5c5c;
+            --cor-sombra: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden; /* Permite scroll vertical, previne horizontal */
+        }
+
+        /* TELA DE CARREGAMENTO E INÍCIO */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--cor-fundo);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #loading-screen img {
+            width: 150px;
+            height: 150px;
+        }
+
+        #start-screen > div {
+            text-align: center;
+        }
+
+        #start-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            transition: transform 0.1s ease;
+        }
+        
+        #start-button:active {
+            transform: scale(0.9);
+        }
+
+        #start-button svg {
+            width: 100px;
+            height: 100px;
+            fill: var(--cor-principal);
+            transition: transform 0.3s ease;
+        }
+
+        #start-button:hover svg {
+            transform: scale(1.1);
+        }
+        
+        #start-screen p {
+            margin-top: 1rem;
+            color: var(--cor-principal);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+        }
+        
+        #start-progress-bar-container {
+            width: 200px;
+            height: 15px;
+            background-color: #f0e6e6;
+            border-radius: 10px;
+            margin: 1.5rem auto 0 auto;
+            border: 1px solid var(--cor-acento);
+            overflow: hidden;
+        }
+        
+        #start-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--cor-principal);
+            border-radius: 10px;
+            transition: width 0.2s ease-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Container Principal */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--cor-container);
+            border-radius: 25px;
+            box-shadow: 0 10px 40px var(--cor-sombra);
+            padding: 3rem;
+            text-align: center;
+            display: none; /* Inicia oculto */
+        }
+
+        .container.visible {
+             display: block;
+             animation: fadeInScaleUp 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Cabeçalho */
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--cor-principal);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--cor-acento);
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        /* Cronômetro */
+        #cronometro {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background-color: #fdf6f6;
+            border-radius: 15px;
+        }
+
+        #cronometro div { text-align: center; }
+
+        #cronometro span {
+            display: block;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--cor-principal);
+            line-height: 1.2;
+        }
+
+        #cronometro p {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--cor-acento);
+        }
+
+        /* Galeria de Fotos */
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .galeria .foto {
+            background-color: white;
+            padding: 10px 10px 20px 10px;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px var(--cor-sombra);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .galeria .foto:hover {
+            transform: translateY(-10px) rotate(3deg);
+            box-shadow: 0 12px 20px var(--cor-sombra);
+        }
+
+        .galeria .foto img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Espaço para Texto */
+        .area-texto {
+            border-top: 2px solid var(--cor-acento);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: justify;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+        
+        /* Botão de Controle da Música */
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--cor-principal);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none; /* Inicia oculto */
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+            transition: transform 0.2s ease;
+        }
+
+        #music-control:hover { transform: scale(1.1); }
+
+        #music-control .icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* EFEITOS ESPECIAIS (CORAÇÕES) */
+        #special-effects-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        .big-heart-explosion {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            font-size: 20vw;
+            color: var(--cor-principal);
+            z-index: 1002;
+            pointer-events: none;
+            display: none;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+        
+        /* ---- MEDIA QUERIES PARA RESPONSIVIDADE ---- */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+                display: block; /* Permite que o conteúdo flua naturalmente */
+            }
+
+            .container {
+                padding: 1.5rem;
+                margin-top: 1rem;
+            }
+
+            header h1 {
+                font-size: 2.8rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            #cronometro {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            #cronometro span {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 2.2rem;
+            }
+
+            #cronometro {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem; /* Mais espaço vertical */
+            }
+
+            #cronometro span {
+                font-size: 1.5rem;
+            }
+
+            #cronometro p {
+                font-size: 0.7rem;
+            }
+            
+            .galeria {
+                gap: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="special-effects-container">
+        <div class="big-heart-explosion">❤️</div>
+    </div>
+    <!-- TELA DE CARREGAMENTO -->
+    <div id="loading-screen" class="overlay">
+        <!-- GIF DE CARREGAMENTO -->
+        <img src="7V0.gif" alt="Carregando..." onerror="this.onerror=null;this.style.display='none';">
+    </div>
+    
+    <!-- TELA DE INÍCIO -->
+    <div id="start-screen" class="overlay" style="display: none;">
+        <div>
+            <button id="start-button" title="Começar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+            <p>Clique no coração</p>
+            <div id="start-progress-bar-container">
+                <div id="start-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container">
+        <header>
+            <h1>Eu & Você</h1>
+            <p>Contando cada segundo ao seu lado...</p>
+        </header>
+
+        <div id="cronometro">
+            <div><span id="meses">0</span><p>Meses</p></div>
+            <div><span id="dias">0</span><p>Dias</p></div>
+            <div><span id="horas">0</span><p>Horas</p></div>
+            <div><span id="minutos">0</span><p>Minutos</p></div>
+            <div><span id="segundos">0</span><p>Segundos</p></div>
+        </div>
+
+        <div class="galeria">
+            <div class="foto"><img src="imagem1.jpeg" alt="Foto 1"></div>
+            <div class="foto"><img src="imagem2.jpeg" alt="Foto 2"></div>
+            <div class="foto"><img src="imagem3.jpeg" alt="Foto 3"></div>
+            <div class="foto"><img src="imagem4.jpeg" alt="Foto 4"></div>
+        </div>
+        
+        <div class="area-texto">
+            <p>
+                Amor, desde o início, em todos os segundos, minutos e horas do meu dia, eu nunca tirei você da minha cabeça.
+                Nos momentos ruins ou nos dias em que estivemos separados, nada disso me impediu de pensar em você e ter a certeza de que eu te amo.
+                Talvez eu esteja sendo meio bobo com isso, mas não vejo problema em demonstrar o quanto EU TE AMO!
+            </p>
+        </div>
+    </div>
+    
+    <!-- BOTÃO FLUTUANTE DE MÚSICA -->
+    <button id="music-control">
+        <svg id="pause-icon" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <svg id="play-icon" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+
+
+    <!-- MÚSICA -->
+    <audio id="musica" src="tribalista.mp3" loop></audio>
+
+    <script>
+        // Elementos da UI
+        const loadingScreen = document.getElementById('loading-screen');
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        const startProgressBar = document.getElementById('start-progress-bar');
+        const mainContainer = document.querySelector('.container');
+        const body = document.querySelector('body');
+        
+        // Elementos da Música
+        const musica = document.getElementById('musica');
+        const musicControlButton = document.getElementById('music-control');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        
+        // Elementos do Efeito de Coração
+        const bigHeart = document.querySelector('.big-heart-explosion');
+        let clickCount = 0;
+        const clicksNeeded = 12;
+
+        // --- LÓGICA DE INICIALIZAÇÃO ---
+        window.addEventListener('load', () => {
+            body.style.display = 'flex';
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                startScreen.style.display = 'flex';
+                setTimeout(() => loadingScreen.style.display = 'none', 500);
+            }, 3000);
+        });
+
+        startButton.addEventListener('click', () => {
+            if (clickCount >= clicksNeeded) return;
+
+            clickCount++;
+            
+            const progress = (clickCount / clicksNeeded) * 100;
+            startProgressBar.style.width = progress + '%';
+
+            if (clickCount === clicksNeeded) {
+                setTimeout(() => {
+                    bigHeart.style.display = 'block';
+                    
+                    musica.play().catch(error => console.log("A reprodução automática foi bloqueada."));
+                    
+                    setTimeout(() => {
+                        startScreen.style.opacity = '0';
+                        setTimeout(() => startScreen.style.display = 'none', 800);
+                        mainContainer.classList.add('visible');
+                        musicControlButton.style.display = 'flex';
+                    }, 500); 
+
+                }, 300); 
+            }
+        });
+        
+        // --- LÓGICA DE CONTROLE DA MÚSICA ---
+        musicControlButton.addEventListener('click', () => {
+             if (musica.paused) {
+                musica.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                musica.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        });
+
+        // --- LÓGICA DO CRONÔMETRO ---
+        function atualizarCronometro() {
+            const dataInicio = new Date('2024-12-12T00:00:00');
+            const agora = new Date();
+
+            if (agora < dataInicio) {
+                ['meses', 'dias', 'horas', 'minutos', 'segundos'].forEach(id => {
+                    document.getElementById(id).innerText = 0;
+                });
+                return;
+            }
+
+            let anos = agora.getFullYear() - dataInicio.getFullYear();
+            let meses = agora.getMonth() - dataInicio.getMonth();
+            if (agora.getDate() < dataInicio.getDate()) meses--;
+            if (meses < 0) { anos--; meses += 12; }
+            const totalMeses = anos * 12 + meses;
+
+            let ultimoAniversario = new Date(dataInicio);
+            ultimoAniversario.setMonth(ultimoAniversario.getMonth() + totalMeses);
+
+            let diff = agora - ultimoAniversario;
+            let dias = Math.floor(diff / 86400000);
+            diff -= dias * 86400000;
+            let horas = Math.floor(diff / 3600000);
+            diff -= horas * 3600000;
+            let minutos = Math.floor(diff / 60000);
+            diff -= minutos * 60000;
+            let segundos = Math.floor(diff / 1000);
+
+            document.getElementById('meses').innerText = totalMeses;
+            document.getElementById('dias').innerText = dias;
+            document.getElementById('horas').innerText = horas;
+            document.getElementById('minutos').innerText = minutos;
+            document.getElementById('segundos').innerText = segundos;
+        }
+
+        setInterval(atualizarCronometro, 1000);
+        atualizarCronometro();
+    </script>
+</body>
+</html>
